@@ -17,11 +17,16 @@
   debug: >
    msg="Got Version {{version.stdout}}"
 
+- name: Debian | Check for existance of ZooKeeper
+  stat: path={{zookeeper_inst.inst_dir}}/zookeeper-{{version.stdout}}
+  register: is_installed
+
 - name: Debian | Download ZooKeeper
   get_url: >
    url={{zookeeper_inst.downloadURL}}
    dest={{zookeeper_inst.inst_dir}}
    mode=0440
+  when: not is_installed.stat.isdir is defined
 
 - name: Debian | Extract ZooKeeper from Download
   unarchive: >
